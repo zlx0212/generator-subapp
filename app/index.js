@@ -7,6 +7,7 @@ const whoami = require('who-ami');
 const dateformat = require('dateformat');
 const mkdirp = require('mkdirp');
 const _ = require('lodash');
+const fs = require('fs');
 
 const path = require('path');
 
@@ -62,13 +63,14 @@ module.exports = class extends Generator{
         mkdirp.sync(path.join(this.destinationPath(), 'store'));
 
         const sourceDir = path.join(this.templatePath(), './app');
-        const filePaths = this.fs.read(sourceDir);
-        _.each(filePaths, (filePath) => {
-            this.fs.copy(
-                this.templatePath('./app/' + filePath),
-                this.destinationPath('./js/mine/reducers/app/' + filePath)
-            );
-        });
+        fs.readdir(sourceDir, (err, items) => {
+          for(let item of items) {
+              this.fs.copy(
+                  this.templatePath("./app",item),
+                this.destinationPath('./reducers/app/', item)
+              );
+          }
+      });
 
     }
 
